@@ -28,13 +28,24 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    const touristSpotCollection = client.db('SAMtravelsDB').collection('touristSpot');
+    const db = client.db('SAMtravelsDB');
+    const touristSpotCollection = db.collection('touristSpot');
+    // const countriesCollection = db.createCollection('countries');
 
     app.get('/touristSpot', async (req, res) => {
       const cursor = touristSpotCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     })
+
+
+    app.get('/countries', async (req, res) => {
+      const countriesCollection = await db.createCollection('countries');
+      const cursor = countriesCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
 
     app.get('/touristSpot/:id', async (req, res) => {
       const id = req.params.id;
