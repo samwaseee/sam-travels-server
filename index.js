@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -36,12 +36,52 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/touristSpot/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id)}
+      const result = await touristSpotCollection.findOne(query);
+      res.send(result);
+    })
+
 
     app.post('/touristSpot', async(req,res) =>{
       const newSpot = req.body;
       console.log(newSpot);
       const result = await touristSpotCollection.insertOne(newSpot);
       res.send(result);
+  })
+
+  app.put('/touristSpot/:id', async(req,res)=>{
+    const id = req.params.id;
+    const filter = {_id: new ObjectId(id)}
+    const options = { upsert: true};
+    const updateSpot = req.body;
+    const Spot = {
+      $set: {
+        average_cost: updateSpot.average_cost,
+         country_Name: updateSpot.country_Name,
+         travel_time: updateSpot.travel_time,
+         image: updateSpot.image,
+         location: updateSpot.location,
+         seasonality: updateSpot.seasonality,
+         short_description: updateSpot.short_description,
+         totalVisitorsPerYear: updateSpot.totalVisitorsPerYear,
+         tourists_spot_name: updateSpot.tourists_spot_name,
+         user_email: updateSpot.user_email,
+         user_name: updateSpot.user_name
+      }
+    }
+
+    const result = await touristSpotCollection.updateOne(filter, Spot, options)
+    res.send(result);
+  })
+
+
+  app.delete('/touristSpot/:id', async(req,res)=>{
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await touristSpotCollection.deleteOne(query);
+    res.send(result);
   })
 
 
