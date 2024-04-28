@@ -65,6 +65,15 @@ async function run() {
     });
 
 
+    app.get('/touristSpot_byCountry/:country_Name', async (req, res) => {
+      const country_Name = req.params.country_Name;
+      const query = { country_Name };
+      const cursor = touristSpotCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+
     app.post('/touristSpot', async (req, res) => {
       const newSpot = req.body;
       console.log(newSpot);
